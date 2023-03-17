@@ -5,7 +5,6 @@ set -eou pipefail
 GIT_TOP_DIR=$(git rev-parse --show-toplevel)
 
 TMPFILE=$(mktemp)
-trap "rm -rf ${TMPFILE}" EXIT
 
 # By default just run against the latest commit
 BASE=${BASE:-HEAD~1}
@@ -34,7 +33,6 @@ echo "INFO: Showing non-generated files:"
 )
 
 # Get only files that have changed
-changed_files=$(cut -d' ' -f2 "${TMPFILE}" | xargs)
 
 details=$(git diff --shortstat "$ancestor" "${HEAD}" -- ${changed_files})
 add=$(echo "$details" | grep -o '[0-9]* insertion' | grep -o '[0-9]*' || true)
@@ -54,7 +52,6 @@ if ((pr_size > 2000)); then
     echo 'allowed within PyTorch infra. PLease make sure to split up'
     echo 'your PR into smaller pieces that can be reviewed.'
     echo 'If you think that this rule should not apply to your PR,'
-    echo 'please contact @albanD or @seemethere.'
     echo
     exit 1
 fi
